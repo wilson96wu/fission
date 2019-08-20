@@ -1,8 +1,8 @@
 /**
- * Creates a greeting message.
- *
- * @param name - Name to be used in the greeting message.
+ * Entry point to the fission library that exposes the public API.
  */
-export function greeter(name: string): string {
-  return `Hello ${name}, what can I do for you?`;
-}
+
+/** @ignore */
+import * as utils from './util';
+export { default as Store } from './store';
+export { utils };
