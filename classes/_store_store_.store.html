@@ -1,0 +1,797 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Store | @teasenshi/fission</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.js" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">@teasenshi/fission</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="../modules/_store_store_.html">&quot;store/store&quot;</a>
+				</li>
+				<li>
+					<a href="_store_store_.store.html">Store</a>
+				</li>
+			</ul>
+			<h1>Class Store&lt;T, U&gt;</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>State management implementation based on the <a href="https://vuex.vuejs.org/">vuex</a> API.</p>
+					</div>
+					<a href="#creating-a-store-instance" id="creating-a-store-instance" style="color: inherit; text-decoration: none;">
+						<h2>Creating a store instance</h2>
+					</a>
+					<p>There are two methods for creating a store instance.</p>
+					<p>You can use the <code>new</code> operator with the class or use the static <code>create</code> method.</p>
+					<p>The create method only has to be used in a typescript environment to get proper type support on the created store instance.</p>
+					<pre><code class="language-typescript"><span class="hljs-keyword">const</span> store = <span class="hljs-keyword">new</span> Store(options);
+
+<span class="hljs-comment">// Provides correct type support in a typescript environment</span>
+<span class="hljs-keyword">const</span> store = Store.create(options);</code></pre>
+					<a href="#options" id="options" style="color: inherit; text-decoration: none;">
+						<h2>Options</h2>
+					</a>
+					<a href="#state" id="state" style="color: inherit; text-decoration: none;">
+						<h3>State</h3>
+					</a>
+					<p>State is a data object that is observed for data changes.</p>
+					<pre><code class="language-typescript"><span class="hljs-keyword">const</span> store = <span class="hljs-keyword">new</span> Store({
+  state: {
+    price: <span class="hljs-number">20</span>,
+    quantity: <span class="hljs-number">10</span>,
+    <span class="hljs-comment">// Computed property that evaluates to the result of calling the function.</span>
+    <span class="hljs-comment">// They automatically update when their dependencies update so that they always contain the latest value.</span>
+    <span class="hljs-comment">// For example changing either price, qty or both will cause total to be reevaluated.</span>
+    total(): <span class="hljs-built_in">number</span> {
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.price * <span class="hljs-keyword">this</span>.quantity;
+    }
+  }
+});
+
+ <span class="hljs-built_in">console</span>.log(store.$state); <span class="hljs-comment">// output: { price: 20, quantity: 10, total: 200 }</span>
+
+ <span class="hljs-comment">// Store state is protected and cannot be set directly, use mutations to change store state.</span>
+ store.$state.price = <span class="hljs-number">50</span>; <span class="hljs-comment">// This line will throw an exception.</span></code></pre>
+					<a href="#mutations" id="mutations" style="color: inherit; text-decoration: none;">
+						<h3>Mutations</h3>
+					</a>
+					<p>Mutations are synchronous functions that can be used change store state.</p>
+					<p>Asynchronous data changes in a mutation will cause an error to occur.
+					If you need to run some workflow that updates store state use a combination of actions and mutations.</p>
+					<pre><code class="language-typescript">  <span class="hljs-keyword">const</span> store = <span class="hljs-keyword">new</span> Store({
+    state: {
+      price: <span class="hljs-number">20</span>,
+      quantity: <span class="hljs-number">10</span>,
+      total(): <span class="hljs-built_in">number</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.price * <span class="hljs-keyword">this</span>.quantity;
+      }
+    },
+    mutations: {
+      <span class="hljs-comment">// All mutations receive a context variable as a first parameter which has been destructured in the following example.</span>
+      <span class="hljs-comment">// The second parameter is the payload passed to the mutation which can be any value.</span>
+      <span class="hljs-comment">// Use payload as an object if you wish to pass multiple parameters to the mutation.</span>
+      incrementPriceBy({state, commit}, value){
+        state.price += value;
+
+        <span class="hljs-comment">// You can do another commit from this mutation.</span>
+        commit(<span class="hljs-string">'SOME_OTHER_COMMIT'</span>, value);
+
+        <span class="hljs-comment">// Mutations can return a result to the caller.</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      }
+  }});
+
+ <span class="hljs-keyword">const</span> success = store.$commit(<span class="hljs-string">'incrementPriceBy'</span>, <span class="hljs-number">20</span>);
+ <span class="hljs-built_in">console</span>.log(success); <span class="hljs-comment">// output: true</span>
+ <span class="hljs-built_in">console</span>.log(store.$state); <span class="hljs-comment">// output: { price: 40, quantity: 10, total: 400 }</span></code></pre>
+					<a href="#actions" id="actions" style="color: inherit; text-decoration: none;">
+						<h3>Actions</h3>
+					</a>
+					<p>Actions are pieces of functionality, often asynchronous, that performs a set of operations or executes a workflow.</p>
+					<p>They cannot modify store state directly and should instead use the <code>context.commit</code> parameter to persist data changes.</p>
+					<pre><code class="language-typescript">  <span class="hljs-keyword">const</span> store = <span class="hljs-keyword">new</span> Store({
+    state: {
+      price: <span class="hljs-number">20</span>,
+      quantity: <span class="hljs-number">10</span>,
+      total(): <span class="hljs-built_in">number</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.price * <span class="hljs-keyword">this</span>.quantity;
+      }
+    },
+    mutations: {
+      ...
+    }
+    actions: {
+      <span class="hljs-comment">// All actions receive a context variable as a first parameter which has been destructured in the following example.</span>
+      <span class="hljs-comment">// The second parameter is the payload passed to the action which can be any value.</span>
+      <span class="hljs-comment">// Use payload as an object if you wish to pass multiple parameters to the action.</span>
+      setTotal({state, commit, dispatch}, payload) {
+        <span class="hljs-comment">// State in actions are readonly and will cause an error when you try to change a value.</span>
+        state.price = <span class="hljs-number">50</span>; <span class="hljs-comment">// this line throws an exception</span>
+
+        <span class="hljs-comment">// Do some stuff probably asynchronously</span>
+
+        <span class="hljs-comment">// To change state you can use context.commit which is a proxy for &lt;a href="_store_store_.store.html#_commit"&gt;$commit&lt;/a&gt;.</span>
+        commit(<span class="hljs-string">'setPrice'</span>, payload.price);
+        commit(<span class="hljs-string">'setQty'</span>, payload.qty);
+
+        <span class="hljs-comment">// You can also call other actions using context.dispatch which is a proxy for &lt;a href="_store_store_.store.html#_dispatch"&gt;$dispatch&lt;/a&gt;.</span>
+        dispatch(<span class="hljs-string">'SOME_OTHER_ACTION'</span>, <span class="hljs-string">'SOME_OTHER_PAYLOAD'</span>);
+
+        <span class="hljs-comment">// Actions can return a value to the caller</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-number">55</span>;
+      }
+      doSomethingAsync({state, commit, dispatch}, payload) {
+        <span class="hljs-comment">// You use promises with actions by returning a Promise</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> {
+          <span class="hljs-keyword">try</span> {
+            <span class="hljs-comment">// Do something</span>
+
+            resolve();
+          }
+          <span class="hljs-keyword">catch</span>(error) {
+            reject(error);
+          }
+        });
+      }
+    }
+  });
+
+ <span class="hljs-keyword">const</span> result = store.$dispatch(<span class="hljs-string">'setTotal'</span>, { price: <span class="hljs-number">50</span>, qty: <span class="hljs-number">30</span> });
+ <span class="hljs-comment">// Ignoring the line that causes an error in the action this would be the output</span>
+ <span class="hljs-built_in">console</span>.log(result); <span class="hljs-comment">// output: 55</span>
+ <span class="hljs-built_in">console</span>.log(store.$state); <span class="hljs-comment">// output: { price: 50, quantity: 30, total: 1500 }</span>
+
+ <span class="hljs-comment">// Example of using promise based actions</span>
+ store.$dispatch(<span class="hljs-string">'doSomethingAsync'</span>, <span class="hljs-string">'value'</span>).then(<span class="hljs-function"><span class="hljs-params">value</span> =&gt;</span> {
+   <span class="hljs-comment">// Do something after promise completes with the resolved value.</span>
+ });</code></pre>
+					<a href="#modules" id="modules" style="color: inherit; text-decoration: none;">
+						<h3>Modules</h3>
+					</a>
+					<p>Modules are a way to define recursive store instances nested under the root store instance.</p>
+					<pre><code class="language-typescript"> <span class="hljs-keyword">const</span> store = Store.create({
+   state: {
+     owner: <span class="hljs-string">'owner'</span>
+   },
+   actions: {},
+   modules: {
+     factory: {
+       state: {
+         workers: [],
+         headCount(): <span class="hljs-built_in">number</span> {
+           <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.workers.length;
+         },
+       },
+       actions: {
+         addWorker({ state }, payload) {
+           <span class="hljs-comment">// Add a worker</span>
+         },
+       },
+       modules: {
+         shop: {
+           state: {
+             employees: [],
+             manager: <span class="hljs-string">'someone'</span>,
+             headCount(): <span class="hljs-built_in">number</span> {
+               <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.employees.length + <span class="hljs-number">1</span>;
+             },
+           },
+         },
+       },
+     },
+   }
+ });
+
+<span class="hljs-comment">// The following shows how you would use the store instances created from these module definitions.</span>
+
+ store.$state.owner;
+ store.$commit(<span class="hljs-string">'MUTATION_NAME'</span>, <span class="hljs-string">''</span>);
+ store.$dispatch(<span class="hljs-string">'ACTION_NAME'</span>, {});
+
+ store.factory.$state.headCount;
+ store.factory.$commit(<span class="hljs-string">'MUTATION_NAME'</span>, {});
+ store.factory.$dispatch(<span class="hljs-string">'ACTION_NAME'</span>, <span class="hljs-string">''</span>);
+
+ store.factory.shop.$state.employees;
+ store.factory.shop.$commit(<span class="hljs-string">'MUTATION_NAME'</span>, []);
+ store.factory.shop.$dispatch(<span class="hljs-string">'ACTION_NAME'</span>, []);</code></pre>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-type-parameters">
+				<h3>Type parameters</h3>
+				<ul class="tsd-type-parameters">
+					<li>
+						<h4>T<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></h4>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p><a href="../interfaces/_store_store_.istoreoptions.html#state">IStoreOptions.state</a> value in the options object passed to the constructor.</p>
+							</div>
+						</div>
+					</li>
+					<li>
+						<h4>U<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></h4>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p><a href="../interfaces/_store_store_.istoreoptions.html#modules">IStoreOptions.modules</a> value in the options object passed to the constructor.</p>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">Store</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_store_store_.store.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_store_store_.store.html#_actions" class="tsd-kind-icon">$actions</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_store_store_.store.html#_mutations" class="tsd-kind-icon">$mutations</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_store_store_.store.html#_state" class="tsd-kind-icon">$state</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_store_store_.store.html#_commit" class="tsd-kind-icon">$commit</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_store_store_.store.html#_dispatch" class="tsd-kind-icon">$dispatch</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_store_store_.store.html#_unwatch" class="tsd-kind-icon">$unwatch</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_store_store_.store.html#_watch" class="tsd-kind-icon">$watch</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-static"><a href="_store_store_.store.html#create" class="tsd-kind-icon">create</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Store<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><a href="../interfaces/_store_store_.istoreoptions.html" class="tsd-signature-type">IStoreOptions</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_store_store_.store.html" class="tsd-signature-type">Store</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/89d4205/src/store/store.ts#L311">store/store.ts:311</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>options: <a href="../interfaces/_store_store_.istoreoptions.html" class="tsd-signature-type">IStoreOptions</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>Options to initialize the store instance.</p>
+										</div>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_store_store_.store.html" class="tsd-signature-type">Store</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_actions" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> $actions</h3>
+					<div class="tsd-signature tsd-kind-icon">$actions<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_store_store_.iactiondefinitions.html" class="tsd-signature-type">IActionDefinitions</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/89d4205/src/store/store.ts#L311">store/store.ts:311</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Map of actions that can get invoked using <a href="_store_store_.store.html#_dispatch">$dispatch</a>.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_mutations" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> $mutations</h3>
+					<div class="tsd-signature tsd-kind-icon">$mutations<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_store_store_.imutationdefinitions.html" class="tsd-signature-type">IMutationDefinitions</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/89d4205/src/store/store.ts#L309">store/store.ts:309</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Map of mutations that can get invoked using <a href="_store_store_.store.html#_commit">$commit</a>.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_state" class="tsd-anchor"></a>
+					<h3>$state</h3>
+					<div class="tsd-signature tsd-kind-icon">$state<span class="tsd-signature-symbol">:</span> <a href="../modules/_observer_observer_.html#observeddata" class="tsd-signature-type">ObservedData</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/89d4205/src/store/store.ts#L307">store/store.ts:307</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Store instance data.</p>
+						</div>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+					<a name="_commit" class="tsd-anchor"></a>
+					<h3>$commit</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">$commit&lt;U&gt;<span class="tsd-signature-symbol">(</span>mutation<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, payload<span class="tsd-signature-symbol">?: </span><a href="" class="tsd-signature-type">U</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/89d4205/src/store/store.ts#L385">store/store.ts:385</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Calls a store <a href="_store_store_.store.html#_mutations">Store.$mutations</a> mutation passing in the data the it needs to perform its task.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>U</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>Any valid javascript type.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>mutation: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Name of the mutation to call.</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> payload: <a href="" class="tsd-signature-type">U</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Value to pass to the mutation.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+					<a name="_dispatch" class="tsd-anchor"></a>
+					<h3>$dispatch</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">$dispatch&lt;U&gt;<span class="tsd-signature-symbol">(</span>action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, payload<span class="tsd-signature-symbol">?: </span><a href="" class="tsd-signature-type">U</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/89d4205/src/store/store.ts#L419">store/store.ts:419</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Calls a store <a href="_store_store_.store.html#_actions">Store.$actions</a> action passing in the data the it needs to perform its task.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>U</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>Any valid javascript type.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>action: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Name of the action to call.</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> payload: <a href="" class="tsd-signature-type">U</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Value to pass to the action.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+					<a name="_unwatch" class="tsd-anchor"></a>
+					<h3>$unwatch</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">$unwatch&lt;U&gt;<span class="tsd-signature-symbol">(</span>propertyPath<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, watcher<span class="tsd-signature-symbol">: </span><a href="../modules/_observer_observable_.html#watcherfunction" class="tsd-signature-type">WatcherFunction</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/89d4205/src/store/store.ts#L452">store/store.ts:452</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Stop a function from executing when a <a href="_store_store_.store.html#_state">$state</a> property changes.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>U</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>propertyPath: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Path to the property on <a href="_store_store_.store.html#_state">$state</a>, if nested use the dot operator for ex <code>nested.property</code>.</p>
+									</div>
+								</li>
+								<li>
+									<h5>watcher: <a href="../modules/_observer_observable_.html#watcherfunction" class="tsd-signature-type">WatcherFunction</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Function to be removed when the property at <code>propertyPath</code> changes.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+					<a name="_watch" class="tsd-anchor"></a>
+					<h3>$watch</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">$watch&lt;U&gt;<span class="tsd-signature-symbol">(</span>propertyPath<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, watcher<span class="tsd-signature-symbol">: </span><a href="../modules/_observer_observable_.html#watcherfunction" class="tsd-signature-type">WatcherFunction</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_observer_observable_.html#watcherfunction" class="tsd-signature-type">WatcherFunction</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/89d4205/src/store/store.ts#L442">store/store.ts:442</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Add a function to be executed when a <a href="_store_store_.store.html#_state">$state</a> property changes.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>U</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>propertyPath: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Path to the property on <a href="_store_store_.store.html#_state">$state</a>, if nested use the dot operator for ex <code>nested.property</code>.</p>
+									</div>
+								</li>
+								<li>
+									<h5>watcher: <a href="../modules/_observer_observable_.html#watcherfunction" class="tsd-signature-type">WatcherFunction</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Function to be called when the property at <code>propertyPath</code> changes.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/_observer_observable_.html#watcherfunction" class="tsd-signature-type">WatcherFunction</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-static">
+					<a name="create" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> create</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">create&lt;T, U&gt;<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><a href="../interfaces/_store_store_.istoreoptions.html" class="tsd-signature-type">IStoreOptions</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_store_store_.html#storedefinition" class="tsd-signature-type">StoreDefinition</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_store_store_.istoreoptions.html" class="tsd-signature-type">IStoreOptions</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/89d4205/src/store/store.ts#L371">store/store.ts:371</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Creates a store instance which has the correct type support for use in typescript environments.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></h4>
+									<div class="tsd-comment tsd-typography">
+										<p><a href="../interfaces/_store_store_.istoreoptions.html#state">IStoreOptions.state</a> value in the options object passed to the function.</p>
+									</div>
+								</li>
+								<li>
+									<h4>U<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></h4>
+									<div class="tsd-comment tsd-typography">
+										<p><a href="../interfaces/_store_store_.istoreoptions.html#modules">IStoreOptions.modules</a> value in the options object passed to the function.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>options: <a href="../interfaces/_store_store_.istoreoptions.html" class="tsd-signature-type">IStoreOptions</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Options to initialize the store instance.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/_store_store_.html#storedefinition" class="tsd-signature-type">StoreDefinition</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_store_store_.istoreoptions.html" class="tsd-signature-type">IStoreOptions</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_index_.html">"index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_observer_array_.html">"observer/array"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_observer_computed_observable_.html">"observer/computed-<wbr>observable"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_observer_index_.html">"observer/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_observer_observable_.html">"observer/observable"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_observer_observer_.html">"observer/observer"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_observer_reactivity_state_.html">"observer/reactivity-<wbr>state"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_observer_watcher_.html">"observer/watcher"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_store_index_.html">"store/index"</a>
+					</li>
+					<li class="current tsd-kind-external-module">
+						<a href="../modules/_store_store_.html">"store/store"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_util_index_.html">"util/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_util_log_.html">"util/log"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_util_object_.html">"util/object"</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_store_store_.store.html" class="tsd-kind-icon">Store</a>
+						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+								<a href="_store_store_.store.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_store_store_.store.html#_actions" class="tsd-kind-icon">$actions</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_store_store_.store.html#_mutations" class="tsd-kind-icon">$mutations</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_store_store_.store.html#_state" class="tsd-kind-icon">$state</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+								<a href="_store_store_.store.html#_commit" class="tsd-kind-icon">$commit</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+								<a href="_store_store_.store.html#_dispatch" class="tsd-kind-icon">$dispatch</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+								<a href="_store_store_.store.html#_unwatch" class="tsd-kind-icon">$unwatch</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+								<a href="_store_store_.store.html#_watch" class="tsd-kind-icon">$watch</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-static">
+								<a href="_store_store_.store.html#create" class="tsd-kind-icon">create</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../interfaces/_store_store_.iactiondefinitions.html" class="tsd-kind-icon">IAction<wbr>Definitions</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../interfaces/_store_store_.imutationdefinitions.html" class="tsd-kind-icon">IMutation<wbr>Definitions</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-not-exported">
+						<a href="../interfaces/_store_store_.istore.html" class="tsd-kind-icon">IStore</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-not-exported">
+						<a href="../interfaces/_store_store_.istoreoptions.html" class="tsd-kind-icon">IStore<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-not-exported">
+						<a href="../modules/_store_store_.html#storedefinition" class="tsd-kind-icon">Store<wbr>Definition</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

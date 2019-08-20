@@ -3,17 +3,17 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>@teasenshi/fission</title>
+	<title>ReactivityState | @teasenshi/fission</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="assets/css/main.css">
+	<link rel="stylesheet" href="../assets/css/main.css">
 </head>
 <body>
 <header>
 	<div class="tsd-page-toolbar">
 		<div class="container">
 			<div class="table-wrap">
-				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.js" data-base="..">
 					<div class="field">
 						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
 						<input id="tsd-search-field" type="text" />
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="index.html" class="title">@teasenshi/fission</a>
+					<a href="../index.html" class="title">@teasenshi/fission</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -53,38 +53,89 @@
 		<div class="container">
 			<ul class="tsd-breadcrumb">
 				<li>
-					<a href="globals.html">Globals</a>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="../modules/_observer_reactivity_state_.html">&quot;observer/reactivity-state&quot;</a>
+				</li>
+				<li>
+					<a href="_observer_reactivity_state_.reactivitystate.html">ReactivityState</a>
 				</li>
 			</ul>
-			<h1> @teasenshi/fission</h1>
+			<h1>Enumeration ReactivityState</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Represents all the possible reactivity states.</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>External modules</h3>
+							<h3>Enumeration members</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-external-module"><a href="modules/_index_.html" class="tsd-kind-icon">"index"</a></li>
-								<li class="tsd-kind-external-module"><a href="modules/_observer_array_.html" class="tsd-kind-icon">"observer/array"</a></li>
-								<li class="tsd-kind-external-module"><a href="modules/_observer_computed_observable_.html" class="tsd-kind-icon">"observer/computed-<wbr>observable"</a></li>
-								<li class="tsd-kind-external-module"><a href="modules/_observer_index_.html" class="tsd-kind-icon">"observer/index"</a></li>
-								<li class="tsd-kind-external-module"><a href="modules/_observer_observable_.html" class="tsd-kind-icon">"observer/observable"</a></li>
-								<li class="tsd-kind-external-module"><a href="modules/_observer_observer_.html" class="tsd-kind-icon">"observer/observer"</a></li>
-								<li class="tsd-kind-external-module"><a href="modules/_observer_reactivity_state_.html" class="tsd-kind-icon">"observer/reactivity-<wbr>state"</a></li>
-								<li class="tsd-kind-external-module"><a href="modules/_observer_watcher_.html" class="tsd-kind-icon">"observer/watcher"</a></li>
-								<li class="tsd-kind-external-module"><a href="modules/_store_index_.html" class="tsd-kind-icon">"store/index"</a></li>
-								<li class="tsd-kind-external-module"><a href="modules/_store_store_.html" class="tsd-kind-icon">"store/store"</a></li>
-								<li class="tsd-kind-external-module"><a href="modules/_util_index_.html" class="tsd-kind-icon">"util/index"</a></li>
-								<li class="tsd-kind-external-module"><a href="modules/_util_log_.html" class="tsd-kind-icon">"util/log"</a></li>
-								<li class="tsd-kind-external-module"><a href="modules/_util_object_.html" class="tsd-kind-icon">"util/object"</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_observer_reactivity_state_.reactivitystate.html#disabled" class="tsd-kind-icon">Disabled</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_observer_reactivity_state_.reactivitystate.html#enabled" class="tsd-kind-icon">Enabled</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_observer_reactivity_state_.reactivitystate.html#lazy" class="tsd-kind-icon">Lazy</a></li>
 							</ul>
 						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Enumeration members</h2>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="disabled" class="tsd-anchor"></a>
+					<h3>Disabled</h3>
+					<div class="tsd-signature tsd-kind-icon">Disabled<span class="tsd-signature-symbol">:</span> </div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/89d4205/src/observer/reactivity-state.ts#L10">observer/reactivity-state.ts:10</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Data change events will throw an exception.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="enabled" class="tsd-anchor"></a>
+					<h3>Enabled</h3>
+					<div class="tsd-signature tsd-kind-icon">Enabled<span class="tsd-signature-symbol">:</span> </div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/89d4205/src/observer/reactivity-state.ts#L14">observer/reactivity-state.ts:14</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Data change events immediately execute.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="lazy" class="tsd-anchor"></a>
+					<h3>Lazy</h3>
+					<div class="tsd-signature tsd-kind-icon">Lazy<span class="tsd-signature-symbol">:</span> </div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/89d4205/src/observer/reactivity-state.ts#L12">observer/reactivity-state.ts:12</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Data change events are collected but not run.</p>
+						</div>
 					</div>
 				</section>
 			</section>
@@ -92,52 +143,94 @@
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals current ">
-						<a href="globals.html"><em>Globals</em></a>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_index_.html">"index"</a>
+						<a href="../modules/_index_.html">"index"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_observer_array_.html">"observer/array"</a>
+						<a href="../modules/_observer_array_.html">"observer/array"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_observer_computed_observable_.html">"observer/computed-<wbr>observable"</a>
+						<a href="../modules/_observer_computed_observable_.html">"observer/computed-<wbr>observable"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_observer_index_.html">"observer/index"</a>
+						<a href="../modules/_observer_index_.html">"observer/index"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_observer_observable_.html">"observer/observable"</a>
+						<a href="../modules/_observer_observable_.html">"observer/observable"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_observer_observer_.html">"observer/observer"</a>
+						<a href="../modules/_observer_observer_.html">"observer/observer"</a>
+					</li>
+					<li class="current tsd-kind-external-module">
+						<a href="../modules/_observer_reactivity_state_.html">"observer/reactivity-<wbr>state"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_observer_reactivity_state_.html">"observer/reactivity-<wbr>state"</a>
+						<a href="../modules/_observer_watcher_.html">"observer/watcher"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_observer_watcher_.html">"observer/watcher"</a>
+						<a href="../modules/_store_index_.html">"store/index"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_store_index_.html">"store/index"</a>
+						<a href="../modules/_store_store_.html">"store/store"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_store_store_.html">"store/store"</a>
+						<a href="../modules/_util_index_.html">"util/index"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_util_index_.html">"util/index"</a>
+						<a href="../modules/_util_log_.html">"util/log"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_util_log_.html">"util/log"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_util_object_.html">"util/object"</a>
+						<a href="../modules/_util_object_.html">"util/object"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-enum tsd-parent-kind-external-module">
+						<a href="_observer_reactivity_state_.reactivitystate.html" class="tsd-kind-icon">Reactivity<wbr>State</a>
+						<ul>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="_observer_reactivity_state_.reactivitystate.html#disabled" class="tsd-kind-icon">Disabled</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="_observer_reactivity_state_.reactivitystate.html#enabled" class="tsd-kind-icon">Enabled</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="_observer_reactivity_state_.reactivitystate.html#lazy" class="tsd-kind-icon">Lazy</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../interfaces/_observer_reactivity_state_.reactivityqueueitem.html" class="tsd-kind-icon">Reactivity<wbr>Queue<wbr>Item</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="../modules/_observer_reactivity_state_.html#reactivity_disabled_exception" class="tsd-kind-icon">REACTIVITY_<wbr>DISABLED_<wbr>EXCEPTION</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_observer_reactivity_state_.html#reactivityactionqueue" class="tsd-kind-icon">reactivity<wbr>Action<wbr>Queue</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="../modules/_observer_reactivity_state_.html#reactivitystate-1" class="tsd-kind-icon">reactivity<wbr>State</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="../modules/_observer_reactivity_state_.html#addreactivityqueueitem" class="tsd-kind-icon">add<wbr>Reactivity<wbr>Queue<wbr>Item</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="../modules/_observer_reactivity_state_.html#processreactivityqueue" class="tsd-kind-icon">process<wbr>Reactivity<wbr>Queue</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="../modules/_observer_reactivity_state_.html#purgereactivityqueue" class="tsd-kind-icon">purge<wbr>Reactivity<wbr>Queue</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="../modules/_observer_reactivity_state_.html#setreactivitystate" class="tsd-kind-icon">set<wbr>Reactivity<wbr>State</a>
+					</li>
 				</ul>
 			</nav>
 		</div>
@@ -207,7 +300,7 @@
 	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
 </div>
 <div class="overlay"></div>
-<script src="assets/js/main.js"></script>
-<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+<script src="../assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
 </body>
 </html>
