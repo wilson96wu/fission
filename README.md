@@ -1,4 +1,4 @@
-# Fission Reactor
+# Fission
 
 [![greenkeeper: enabled](https://badges.greenkeeper.io/amaya-loves-tea/fission.svg)](https://greenkeeper.io/)
 [![build: status](https://travis-ci.org/amaya-loves-tea/fission.svg?branch=master)](https://travis-ci.org/amaya-loves-tea/fission)
