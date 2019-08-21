@@ -30,7 +30,7 @@
     "cov:publish": "codecov",
     "doc": "typedoc src && run-s doc:open",
     "doc:open": "open-cli docs/index.html",
-    "doc:publish": "gh-pages -t -m \"chore: update docs\" -d docs",
+    "doc:publish": "gh-pages -t -m \"chore: update docs\" -d docs -r https://$GH_TOKEN@github.com/amaya-loves-tea/fission.git",
     "release": "semantic-release"
   },
   "dependencies": {},

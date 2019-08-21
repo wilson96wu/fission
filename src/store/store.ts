@@ -342,7 +342,6 @@ export default class Store<T extends object, U extends object> {
       }
 
       // process modules
-      // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
       options.modules = options.modules || ({} as U);
       keys = Object.keys(options.modules);
       for (i = 0; i < keys.length; i++) {

@@ -444,7 +444,7 @@ describe('observer', () => {
     });
 
     describe('array mutation methods are observed', () => {
-      function wrapArrayItemGetters(array: any[], start: number = 0, end: number = array.length) {
+      function wrapArrayItemGetters(array: any[], start = 0, end: number = array.length) {
         for (let i = start; i < end; i++) {
           const propertyDescriptor = Object.getOwnPropertyDescriptor(array, i);
           if (propertyDescriptor && propertyDescriptor.get && propertyDescriptor.set) {
@@ -460,7 +460,7 @@ describe('observer', () => {
 
       function validateArrayItemSettersCalledOnce(
         array: any[],
-        start: number = 0,
+        start = 0,
         end: number = array.length,
       ) {
         for (let i = start; i < end; i++) {
@@ -500,11 +500,7 @@ describe('observer', () => {
         }
       }
 
-      function validateArrayItemsObservable(
-        array: any[],
-        start: number = 0,
-        end: number = array.length,
-      ) {
+      function validateArrayItemsObservable(array: any[], start = 0, end: number = array.length) {
         for (let i = start; i < end; i++) {
           if (isObject(array[i])) {
             validateObjectObserved(array[i]);
