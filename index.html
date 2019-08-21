@@ -161,6 +161,254 @@
 					<li><code>Current Jest Test</code> - debug current jest test.</li>
 					<li><code>All Jest Tests</code> - debug all jest tests.</li>
 				</ul>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
+				</a>
+				<a href="#creating-a-store-instance" id="creating-a-store-instance" style="color: inherit; text-decoration: none;">
+					<h3>Creating a store instance</h3>
+				</a>
+				<p>There are 2 methods for creating a store instance. The one you end up using depends on whether or not you are using typescript.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> Store <span class="hljs-keyword">from</span> <span class="hljs-string">'@teasenshi/fission'</span>;
+
+<span class="hljs-comment">// Use in javascript environments</span>
+<span class="hljs-keyword">const</span> store = <span class="hljs-keyword">new</span> Store(options);
+
+<span class="hljs-comment">// Use in Typescript environments which provides proper type support on the store instance</span>
+<span class="hljs-keyword">const</span> store = Store.create(options);</code></pre>
+				<a href="#store-state" id="store-state" style="color: inherit; text-decoration: none;">
+					<h3>Store state</h3>
+				</a>
+				<p>Store state is readonly data stored on the store instance. You specify store state by adding a <code>state</code> property in the options object passed to the store constructor.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> store = <span class="hljs-keyword">new</span> Store({
+  state: {
+    price: <span class="hljs-number">55</span>,
+    qty: <span class="hljs-number">10</span>,
+    shouldFormat: <span class="hljs-literal">false</span>,
+    total() {
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.price * <span class="hljs-keyword">this</span>.qty;
+    },
+    totalTimesFive() {
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.total * <span class="hljs-number">5</span>;
+    },
+    formattedTotal() {
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.format) {
+        <span class="hljs-comment">// return a formatted currency string</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Intl</span>.NumberFormat(<span class="hljs-string">'en-US'</span>, {
+          style: <span class="hljs-string">'currency'</span>,
+          currency: <span class="hljs-string">'USD'</span>,
+        }).format(<span class="hljs-keyword">this</span>.total);
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-string">'formatting disabled'</span>;
+      }
+    },
+    shortCircuiting() {
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.price &gt; <span class="hljs-number">60</span> &amp;&amp; <span class="hljs-keyword">this</span>.qty &gt; <span class="hljs-number">20</span>;
+    },
+  },
+});
+
+<span class="hljs-built_in">console</span>.log(store.$state); <span class="hljs-comment">// output: { price: 55, qty: 10, total: 550, totalTimesFive: 2750, formattedTotal: 'formatting disabled',  }</span>
+
+<span class="hljs-comment">// This line throws an exceptions as store state cannot be set directly.</span>
+store.$state.price = <span class="hljs-number">55</span>;</code></pre>
+				<a href="#computed-properties" id="computed-properties" style="color: inherit; text-decoration: none;">
+					<h4>Computed Properties</h4>
+				</a>
+				<p>The function definitions in the example above are computed properties/values.
+					When you use other properties in a computed property definition they are registered as dependencies.
+				Changing dependencies causes a computed property to automatically reevaluate.</p>
+				<a href="#chained-computed-properties" id="chained-computed-properties" style="color: inherit; text-decoration: none;">
+					<h5>Chained Computed Properties</h5>
+				</a>
+				<p><code>totalTimesFive</code> is a chained computed property. When <code>total</code> changes, i.e when <code>price</code> and/or <code>qty</code> change, it will cause <code>totalTimesFive</code> to change as well.</p>
+				<p>The order in which you declare them are important. For example declaring <code>totalTimesFive</code> before <code>total</code> will not work since <code>total</code> is undefined when <code>totalTimesFive</code> is created!</p>
+				<a href="#caveats" id="caveats" style="color: inherit; text-decoration: none;">
+					<h5>Caveats</h5>
+				</a>
+				<p><code>formattedTotal</code> demonstrates an important consideration when creating computed properties.</p>
+				<p>Since both <code>shouldFormat</code> and <code>total</code> are used in that function you would expect that changing either would cause it to be reevaluated.</p>
+				<p>Unfortunately this is not the case since the first time this function runs <code>format</code> is false and the function will never <strong>reach</strong> <code>total</code>. In this case only changes to <code>format</code> will cause it to be reevaluated.</p>
+				<p>Issues like these can be solved by refactoring the function in a way that all properties are reachable the first time it runs.</p>
+				<p>In <code>formattedTotal</code> you can for example add <code>total</code> to the if condition <code>if(this.total &amp;&amp; this.format)</code>.</p>
+				<p><code>shortCircuiting</code> demonstrates the same issue due to <a href="#https://codeburst.io/javascript-short-circuit-conditionals-bbc13ac3e9eb#targetText=Short%20circuiting%20means%20that%20in,first%20operand%20must%20be%20true.">conditional short circuiting</a>.</p>
+				<p>In this case, changes to <code>qty</code> will not cause <code>shortCircuiting</code> to be reevaluated. This is because the first time this function is evaluated <code>price &lt; 60</code> so the condition short circuits and qty is never reached.</p>
+				<a href="#watchers" id="watchers" style="color: inherit; text-decoration: none;">
+					<h4>Watchers</h4>
+				</a>
+				<p>Watchers are functions that get called when a state property changes. You can add/remove watchers from properties using <code>store.$watch</code> and <code>store.$unwatch</code> respectively.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> store = <span class="hljs-keyword">new</span> Store({
+  state: {
+    products: {
+      stock: [{ name: <span class="hljs-string">'jelly'</span>, price: <span class="hljs-number">20</span>, qty: <span class="hljs-number">100</span> }, { name: <span class="hljs-string">'mouse'</span>, price: <span class="hljs-number">55</span>, qty: <span class="hljs-number">5</span> }],
+      lowStockItems() {
+        <span class="hljs-keyword">return</span> stock.filter(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x.qty &lt; <span class="hljs-number">10</span>).map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x.name);
+      },
+    },
+  },
+});
+
+<span class="hljs-comment">/*
+  The following example watches a nested property.
+  When that property changes the watcher function will get called.
+
+  $watch expects the path to the property as a first parameter and the watcher function as a second. It returns a reference to the watcher function.
+*/</span>
+<span class="hljs-keyword">const</span> watcher = store.$watch(<span class="hljs-string">'products.lowStockItems'</span>, <span class="hljs-function">(<span class="hljs-params">value, oldValue</span>) =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(value, oldValue);
+});
+
+<span class="hljs-comment">// Remove 95 jelly from stock, jelly should now be a `lowStockItem` and the watcher will be called.</span>
+store.commit(<span class="hljs-string">'removeStock'</span>, { name: <span class="hljs-string">'jelly'</span>, amount: <span class="hljs-number">95</span> }); <span class="hljs-comment">// output: ['jelly', 'mouse'] ['jelly']</span>
+
+<span class="hljs-comment">// Stop watching changes to 'lowStockItems'</span>
+store.$unwatch(<span class="hljs-string">'products.lowStockItems'</span>, watcher);
+
+<span class="hljs-comment">// Since watcher is removed there is no output</span>
+store.commit(<span class="hljs-string">'addStock'</span>, { name: <span class="hljs-string">'jelly'</span>, amount: <span class="hljs-number">95</span> });</code></pre>
+				<a href="#mutations" id="mutations" style="color: inherit; text-decoration: none;">
+					<h3>Mutations</h3>
+				</a>
+				<p>Mutations are synchronous functions that have the ability to change the store state. They are committed (run) using the <code>store.$commit</code> method.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> store = <span class="hljs-keyword">new</span> Store({
+  state: {
+    ...
+  },
+  mutations: {
+    <span class="hljs-comment">/*
+     'context' is an object containing a reference to some store instance members.
+     'payload' is any value that can be passed to the mutation by the user.
+    */</span>
+    setPrice(context, payload) {
+      context.state.price = payload;
+    },
+    <span class="hljs-comment">// Destructured context variable</span>
+    setQty({state}, value) {
+      state.qty = value;
+    },
+     <span class="hljs-comment">// Mutations can return a value to the caller</span>
+    doSomethingAndReturn({state}, value) {
+      <span class="hljs-comment">// Do something...</span>
+
+      <span class="hljs-keyword">return</span> value;
+    }
+    <span class="hljs-comment">// The context parameter also contains a reference to the $commit function.</span>
+    doSomethingAndCommit({state, commit}, value) {
+      <span class="hljs-comment">// Do stuff</span>
+
+      <span class="hljs-comment">// Commit another mutation</span>
+      commit(<span class="hljs-string">'setQty'</span>, value);
+    }
+    <span class="hljs-comment">// Mutations cannot asynchronously change store state</span>
+    invalidAsync({state}, value) {
+      state.price = <span class="hljs-number">100</span>; <span class="hljs-comment">// Ok</span>
+      setTimeout(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        state.qty = value; <span class="hljs-comment">// This line will cause an exception</span>
+      }, <span class="hljs-number">100</span>);
+    }
+  }
+});
+
+<span class="hljs-comment">// Simple commit</span>
+store.$commit(<span class="hljs-string">'setPrice'</span>, <span class="hljs-number">22</span>);
+<span class="hljs-built_in">console</span>.log(store.$state.price); <span class="hljs-comment">// output: 22</span>
+
+<span class="hljs-comment">// Store the result of committing the mutation</span>
+<span class="hljs-keyword">const</span> result = store.commit(<span class="hljs-string">'doSomethingAndReturn'</span>, <span class="hljs-string">'A VALUE'</span>);
+<span class="hljs-built_in">console</span>.log(result); <span class="hljs-comment">// output: "A VALUE"</span></code></pre>
+				<a href="#actions" id="actions" style="color: inherit; text-decoration: none;">
+					<h3>Actions</h3>
+				</a>
+				<p>Actions are functions that can be used to control some process or workflow, often asynchronously. They are dispatched (run) using the <code>store.$dispatch</code> method.</p>
+				<p>Actions cannot set store state directly but are able to call commits from within them to achieve the same result.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> store = <span class="hljs-keyword">new</span> Store({
+  state: {
+    ...
+  },
+  mutations: {
+    ...
+  },
+  actions: {
+    <span class="hljs-comment">// State is readonly in an action.</span>
+    invalidAction({state}, value) {
+      state.price = <span class="hljs-number">100</span>; <span class="hljs-comment">// This line will cause an exception</span>
+    },
+    <span class="hljs-comment">// You can commit and dispatch from an action</span>
+    setTotal({commit, dispatch}, payload) {
+      <span class="hljs-comment">// Do something with payload perhaps asynchronously persisting it to a server</span>
+
+      <span class="hljs-comment">// Persist data to store using commit</span>
+      commit(<span class="hljs-string">'setTotal'</span>, payload);
+
+      <span class="hljs-comment">// Trigger another action</span>
+      dispatch(<span class="hljs-string">'totalSet'</span>);
+    },
+    <span class="hljs-comment">/*
+      Actions can also return values to the caller.
+      You can use this capability to make them asynchronous using ES6 promises or generators
+    */</span>
+    doSomethingAsync(context, payload) {
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> {
+        <span class="hljs-keyword">try</span> {
+          <span class="hljs-comment">// Do something</span>
+          resolve();
+        }
+        <span class="hljs-keyword">catch</span> {
+          reject();
+        }
+      });
+    }
+  }
+});
+
+<span class="hljs-comment">// Simple action</span>
+store.$dispatch(<span class="hljs-string">'setTotal'</span>, {price: <span class="hljs-number">50</span>, qty: <span class="hljs-number">15</span>});
+
+<span class="hljs-comment">// Promise based action</span>
+store.dispatch(<span class="hljs-string">'doSomethingAsync'</span>).then(<span class="hljs-function"><span class="hljs-params">value</span> =&gt;</span> {
+  <span class="hljs-comment">// Do something</span>
+});</code></pre>
+				<a href="#modules" id="modules" style="color: inherit; text-decoration: none;">
+					<h3>Modules</h3>
+				</a>
+				<p>Modules are a way to define nested store instances.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> store = <span class="hljs-keyword">new</span> Store({
+  <span class="hljs-comment">// Root store instance</span>
+  state: {...},
+  mutations: {...},
+  actions: {...},
+  modules: {
+    <span class="hljs-comment">// Factory module</span>
+    factory: {
+      state: {...},
+      mutations: {...},
+      actions: {...},
+      modules: {
+        <span class="hljs-comment">// Shop module</span>
+        shop: {
+          state: {...},
+          mutations: {...},
+          actions: {...},
+        }
+      }
+    }
+  }
+});
+
+<span class="hljs-comment">// Usage examples</span>
+<span class="hljs-comment">// Root store</span>
+store.$state.name;
+store.$commit(<span class="hljs-string">'MUTATION_NAME'</span>, <span class="hljs-string">''</span>);
+store.$dispatch(<span class="hljs-string">'ACTION_NAME'</span>, {});
+
+<span class="hljs-comment">// Root.Factory module</span>
+store.factory.$state.headCount;
+store.factory.$commit(<span class="hljs-string">'MUTATION_NAME'</span>, {});
+store.factory.$dispatch(<span class="hljs-string">'ACTION_NAME'</span>, <span class="hljs-string">''</span>);
+
+<span class="hljs-comment">// Root.Factory.Shop module</span>
+store.factory.shop.$state.employees;
+store.factory.shop.$commit(<span class="hljs-string">'MUTATION_NAME'</span>, []);
+store.factory.shop.$dispatch(<span class="hljs-string">'ACTION_NAME'</span>, []);</code></pre>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
