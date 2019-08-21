@@ -191,7 +191,7 @@
       <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.total * <span class="hljs-number">5</span>;
     },
     formattedTotal() {
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.format) {
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.shouldFormat) {
         <span class="hljs-comment">// return a formatted currency string</span>
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Intl</span>.NumberFormat(<span class="hljs-string">'en-US'</span>, {
           style: <span class="hljs-string">'currency'</span>,
@@ -227,44 +227,11 @@ store.$state.price = <span class="hljs-number">55</span>;</code></pre>
 				</a>
 				<p><code>formattedTotal</code> demonstrates an important consideration when creating computed properties.</p>
 				<p>Since both <code>shouldFormat</code> and <code>total</code> are used in that function you would expect that changing either would cause it to be reevaluated.</p>
-				<p>Unfortunately this is not the case since the first time this function runs <code>format</code> is false and the function will never <strong>reach</strong> <code>total</code>. In this case only changes to <code>format</code> will cause it to be reevaluated.</p>
+				<p>Unfortunately this is not the case since the first time this function runs <code>shouldFormat</code> is false and the function will never <strong>reach</strong> <code>total</code>. In this case only changes to <code>shouldFormat</code> will cause it to be reevaluated.</p>
 				<p>Issues like these can be solved by refactoring the function in a way that all properties are reachable the first time it runs.</p>
-				<p>In <code>formattedTotal</code> you can for example add <code>total</code> to the if condition <code>if(this.total &amp;&amp; this.format)</code>.</p>
+				<p>In <code>formattedTotal</code> you can for example add <code>total</code> to the if condition <code>if(this.total &amp;&amp; this.shouldFormat)</code>.</p>
 				<p><code>shortCircuiting</code> demonstrates the same issue due to <a href="#https://codeburst.io/javascript-short-circuit-conditionals-bbc13ac3e9eb#targetText=Short%20circuiting%20means%20that%20in,first%20operand%20must%20be%20true.">conditional short circuiting</a>.</p>
 				<p>In this case, changes to <code>qty</code> will not cause <code>shortCircuiting</code> to be reevaluated. This is because the first time this function is evaluated <code>price &lt; 60</code> so the condition short circuits and qty is never reached.</p>
-				<a href="#watchers" id="watchers" style="color: inherit; text-decoration: none;">
-					<h4>Watchers</h4>
-				</a>
-				<p>Watchers are functions that get called when a state property changes. You can add/remove watchers from properties using <code>store.$watch</code> and <code>store.$unwatch</code> respectively.</p>
-				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> store = <span class="hljs-keyword">new</span> Store({
-  state: {
-    products: {
-      stock: [{ name: <span class="hljs-string">'jelly'</span>, price: <span class="hljs-number">20</span>, qty: <span class="hljs-number">100</span> }, { name: <span class="hljs-string">'mouse'</span>, price: <span class="hljs-number">55</span>, qty: <span class="hljs-number">5</span> }],
-      lowStockItems() {
-        <span class="hljs-keyword">return</span> stock.filter(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x.qty &lt; <span class="hljs-number">10</span>).map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x.name);
-      },
-    },
-  },
-});
-
-<span class="hljs-comment">/*
-  The following example watches a nested property.
-  When that property changes the watcher function will get called.
-
-  $watch expects the path to the property as a first parameter and the watcher function as a second. It returns a reference to the watcher function.
-*/</span>
-<span class="hljs-keyword">const</span> watcher = store.$watch(<span class="hljs-string">'products.lowStockItems'</span>, <span class="hljs-function">(<span class="hljs-params">value, oldValue</span>) =&gt;</span> {
-  <span class="hljs-built_in">console</span>.log(value, oldValue);
-});
-
-<span class="hljs-comment">// Remove 95 jelly from stock, jelly should now be a `lowStockItem` and the watcher will be called.</span>
-store.commit(<span class="hljs-string">'removeStock'</span>, { name: <span class="hljs-string">'jelly'</span>, amount: <span class="hljs-number">95</span> }); <span class="hljs-comment">// output: ['jelly', 'mouse'] ['jelly']</span>
-
-<span class="hljs-comment">// Stop watching changes to 'lowStockItems'</span>
-store.$unwatch(<span class="hljs-string">'products.lowStockItems'</span>, watcher);
-
-<span class="hljs-comment">// Since watcher is removed there is no output</span>
-store.commit(<span class="hljs-string">'addStock'</span>, { name: <span class="hljs-string">'jelly'</span>, amount: <span class="hljs-number">95</span> });</code></pre>
 				<a href="#mutations" id="mutations" style="color: inherit; text-decoration: none;">
 					<h3>Mutations</h3>
 				</a>
@@ -367,6 +334,40 @@ store.$dispatch(<span class="hljs-string">'setTotal'</span>, {price: <span class
 store.dispatch(<span class="hljs-string">'doSomethingAsync'</span>).then(<span class="hljs-function"><span class="hljs-params">value</span> =&gt;</span> {
   <span class="hljs-comment">// Do something</span>
 });</code></pre>
+				<a href="#watchers" id="watchers" style="color: inherit; text-decoration: none;">
+					<h3>Watchers</h3>
+				</a>
+				<p>Watchers are functions that get called when a state property changes. You can add/remove watchers from properties using <code>store.$watch</code> and <code>store.$unwatch</code> respectively.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> store = <span class="hljs-keyword">new</span> Store({
+  state: {
+    products: {
+      stock: [{ name: <span class="hljs-string">'jelly'</span>, price: <span class="hljs-number">20</span>, qty: <span class="hljs-number">100</span> }, { name: <span class="hljs-string">'mouse'</span>, price: <span class="hljs-number">55</span>, qty: <span class="hljs-number">5</span> }],
+      lowStockItems() {
+        <span class="hljs-keyword">return</span> stock.filter(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x.qty &lt; <span class="hljs-number">10</span>).map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x.name);
+      },
+    },
+  },
+});
+
+<span class="hljs-comment">/*
+  The following example watches a nested property.
+  When that property changes the watcher function will get called.
+
+  $watch expects the path to the property as a first parameter and the watcher function as a second 
+  and returns a reference to the watcher function.
+*/</span>
+<span class="hljs-keyword">const</span> watcher = store.$watch(<span class="hljs-string">'products.lowStockItems'</span>, <span class="hljs-function">(<span class="hljs-params">value, oldValue</span>) =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(value, oldValue);
+});
+
+<span class="hljs-comment">// Remove 95 jelly from stock, jelly should now be a `lowStockItem` and the watcher will be called.</span>
+store.commit(<span class="hljs-string">'removeStock'</span>, { name: <span class="hljs-string">'jelly'</span>, amount: <span class="hljs-number">95</span> }); <span class="hljs-comment">// output: ['jelly', 'mouse'] ['jelly']</span>
+
+<span class="hljs-comment">// Stop watching changes to 'lowStockItems'</span>
+store.$unwatch(<span class="hljs-string">'products.lowStockItems'</span>, watcher);
+
+<span class="hljs-comment">// Since watcher is removed there is no output</span>
+store.commit(<span class="hljs-string">'addStock'</span>, { name: <span class="hljs-string">'jelly'</span>, amount: <span class="hljs-number">95</span> });</code></pre>
 				<a href="#modules" id="modules" style="color: inherit; text-decoration: none;">
 					<h3>Modules</h3>
 				</a>
