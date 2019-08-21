@@ -128,7 +128,7 @@ const store = new Store({
       return this.total * 5;
     },
     formattedTotal() {
-      if (this.format) {
+      if (this.shouldFormat) {
         // return a formatted currency string
         return new Intl.NumberFormat('en-US', {
           style: 'currency',
@@ -168,51 +168,15 @@ The order in which you declare them are important. For example declaring `totalT
 
 Since both `shouldFormat` and `total` are used in that function you would expect that changing either would cause it to be reevaluated.
 
-Unfortunately this is not the case since the first time this function runs `format` is false and the function will never **reach** `total`. In this case only changes to `format` will cause it to be reevaluated.
+Unfortunately this is not the case since the first time this function runs `shouldFormat` is false and the function will never **reach** `total`. In this case only changes to `shouldFormat` will cause it to be reevaluated.
 
 Issues like these can be solved by refactoring the function in a way that all properties are reachable the first time it runs.
 
-In `formattedTotal` you can for example add `total` to the if condition `if(this.total && this.format)`.
+In `formattedTotal` you can for example add `total` to the if condition `if(this.total && this.shouldFormat)`.
 
 `shortCircuiting` demonstrates the same issue due to [conditional short circuiting](#https://codeburst.io/javascript-short-circuit-conditionals-bbc13ac3e9eb#targetText=Short%20circuiting%20means%20that%20in,first%20operand%20must%20be%20true.).
 
 In this case, changes to `qty` will not cause `shortCircuiting` to be reevaluated. This is because the first time this function is evaluated `price < 60` so the condition short circuits and qty is never reached.
-
-#### Watchers
-
-Watchers are functions that get called when a state property changes. You can add/remove watchers from properties using `store.$watch` and `store.$unwatch` respectively.
-
-```typescript
-const store = new Store({
-  state: {
-    products: {
-      stock: [{ name: 'jelly', price: 20, qty: 100 }, { name: 'mouse', price: 55, qty: 5 }],
-      lowStockItems() {
-        return stock.filter(x => x.qty < 10).map(x => x.name);
-      },
-    },
-  },
-});
-
-/*
-  The following example watches a nested property.
-  When that property changes the watcher function will get called.
-
-  $watch expects the path to the property as a first parameter and the watcher function as a second. It returns a reference to the watcher function.
-*/
-const watcher = store.$watch('products.lowStockItems', (value, oldValue) => {
-  console.log(value, oldValue);
-});
-
-// Remove 95 jelly from stock, jelly should now be a `lowStockItem` and the watcher will be called.
-store.commit('removeStock', { name: 'jelly', amount: 95 }); // output: ['jelly', 'mouse'] ['jelly']
-
-// Stop watching changes to 'lowStockItems'
-store.$unwatch('products.lowStockItems', watcher);
-
-// Since watcher is removed there is no output
-store.commit('addStock', { name: 'jelly', amount: 95 });
-```
 
 ### Mutations
 
@@ -321,6 +285,43 @@ store.$dispatch('setTotal', {price: 50, qty: 15});
 store.dispatch('doSomethingAsync').then(value => {
   // Do something
 });
+```
+
+### Watchers
+
+Watchers are functions that get called when a state property changes. You can add/remove watchers from properties using `store.$watch` and `store.$unwatch` respectively.
+
+```typescript
+const store = new Store({
+  state: {
+    products: {
+      stock: [{ name: 'jelly', price: 20, qty: 100 }, { name: 'mouse', price: 55, qty: 5 }],
+      lowStockItems() {
+        return stock.filter(x => x.qty < 10).map(x => x.name);
+      },
+    },
+  },
+});
+
+/*
+  The following example watches a nested property.
+  When that property changes the watcher function will get called.
+
+  $watch expects the path to the property as a first parameter and the watcher function as a second 
+  and returns a reference to the watcher function.
+*/
+const watcher = store.$watch('products.lowStockItems', (value, oldValue) => {
+  console.log(value, oldValue);
+});
+
+// Remove 95 jelly from stock, jelly should now be a `lowStockItem` and the watcher will be called.
+store.commit('removeStock', { name: 'jelly', amount: 95 }); // output: ['jelly', 'mouse'] ['jelly']
+
+// Stop watching changes to 'lowStockItems'
+store.$unwatch('products.lowStockItems', watcher);
+
+// Since watcher is removed there is no output
+store.commit('addStock', { name: 'jelly', amount: 95 });
 ```
 
 ### Modules
