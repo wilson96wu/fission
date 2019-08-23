@@ -199,12 +199,6 @@ const store = new Store({
     setQty({state}, value) {
       state.qty = value;
     },
-     // Mutations can return a value to the caller
-    doSomethingAndReturn({state}, value) {
-      // Do something...
-
-      return value;
-    }
     // The context parameter also contains a reference to the $commit function.
     doSomethingAndCommit({state, commit}, value) {
       // Do stuff
@@ -225,10 +219,6 @@ const store = new Store({
 // Simple commit
 store.$commit('setPrice', 22);
 console.log(store.$state.price); // output: 22
-
-// Store the result of committing the mutation
-const result = store.commit('doSomethingAndReturn', 'A VALUE');
-console.log(result); // output: "A VALUE"
 ```
 
 ### Actions

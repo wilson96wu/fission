@@ -113,7 +113,7 @@ describe('Store', () => {
 
   describe('create', () => {
     it('is a static method that creates typescript friendly store instances', () => {
-      expect(Store.create({} as any)).toEqual(new Store({} as any));
+      expect(Store.create({} as any)).toBeInstanceOf(Store);
     });
   });
 
@@ -141,6 +141,14 @@ describe('Store', () => {
       expect(data).toBe(payload);
     });
 
+    it('has the ability to call a commit within itself', () => {
+      const store = Store.create(createStoreOptions());
+
+      store.$commit('commitInCommit');
+
+      expect(store.$state.name).toBe('commitInCommit');
+    });
+
     it('creates a warning when calling a mutation that does not exist', () => {
       const store = Store.create(createStoreOptions());
       store.$commit('DOES NOT EXST');
@@ -166,13 +174,6 @@ describe('Store', () => {
       const store = new Store(options);
       expect(() => store.$commit('errorMutation')).toThrowError('test');
     });
-
-    it('returns the result of executing the mutation', () => {
-      const options: any = createStoreOptions();
-      options.mutations.result = () => 'string return value';
-      const store = Store.create(options);
-      expect(store.$commit('result', undefined)).toBe('string return value');
-    });
   });
 
   describe('$dispatch', () => {
@@ -191,6 +192,16 @@ describe('Store', () => {
 
       const data = (options.actions.changeNameAsync as any).mock.calls[0][1];
       expect(data).toBe(payload);
+    });
+
+    it('has the ability to commit and dispatch', () => {
+      const store = Store.create(createStoreOptions());
+
+      store.$dispatch('commitInDispatch', 'commitInDispatch');
+      expect(store.$state.name).toBe('commitInDispatch');
+
+      store.$dispatch('dispatchInDispatch');
+      expect(store.$state.name).toBe('dispatchInDispatch');
     });
 
     it('creates a warning when calling a action that does not exist', () => {
@@ -283,12 +294,21 @@ function createStoreOptions() {
       addStockItem(ctx: any, item: any) {
         ctx.state.stock.push(item);
       },
+      commitInCommit(ctx: any) {
+        ctx.commit('changeName', 'commitInCommit');
+      },
     },
     actions: {
       changeNameAsync(ctx: any, name: string): void {
         setTimeout(() => {
           ctx.commit('changeName', name);
         }, 10);
+      },
+      commitInDispatch(ctx: any, value: string) {
+        ctx.commit('changeName', value);
+      },
+      dispatchInDispatch(ctx: any): void {
+        ctx.dispatch('commitInDispatch', 'dispatchInDispatch');
       },
     },
     modules: {

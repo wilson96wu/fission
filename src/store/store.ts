@@ -172,9 +172,6 @@ interface IActionDefinitions {
  *
  *         // You can do another commit from this mutation.
  *         commit('SOME_OTHER_COMMIT', value);
- *
- *         // Mutations can return a result to the caller.
- *         return true;
  *       }
  *   }});
  *
@@ -385,13 +382,12 @@ export default class Store<T extends object, U extends object> {
    *
    * @typeparam U - Any valid javascript type.
    */
-  public $commit<U>(mutation: string, payload?: U): any {
+  public $commit<U>(mutation: string, payload?: U): void {
     const storeOperation = this.$mutations[mutation];
     if (storeOperation) {
-      let result: any;
       try {
         setReactivityState(ReactivityState.Enabled);
-        result = storeOperation.call(
+        storeOperation.call(
           undefined,
           {
             state: this.$state as T,
@@ -405,7 +401,6 @@ export default class Store<T extends object, U extends object> {
       } finally {
         setReactivityState(ReactivityState.Disabled);
       }
-      return result;
     } else {
       logWarning(`Mutation with key '${mutation}' does not exist`);
     }
