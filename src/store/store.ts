@@ -354,6 +354,10 @@ export default class Store<T extends object, U extends object> {
           throw new Error('Modules must be plain javascript options objects');
         }
       }
+
+      // Ensure that $commit and $dispatch have the correct context
+      this.$commit = this.$commit.bind(this);
+      this.$dispatch = this.$dispatch.bind(this);
     } else {
       throw new Error('Store only accepts a plain javascript options object');
     }
