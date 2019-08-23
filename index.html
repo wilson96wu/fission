@@ -252,12 +252,6 @@ store.$state.price = <span class="hljs-number">55</span>;</code></pre>
     setQty({state}, value) {
       state.qty = value;
     },
-     <span class="hljs-comment">// Mutations can return a value to the caller</span>
-    doSomethingAndReturn({state}, value) {
-      <span class="hljs-comment">// Do something...</span>
-
-      <span class="hljs-keyword">return</span> value;
-    }
     <span class="hljs-comment">// The context parameter also contains a reference to the $commit function.</span>
     doSomethingAndCommit({state, commit}, value) {
       <span class="hljs-comment">// Do stuff</span>
@@ -277,11 +271,7 @@ store.$state.price = <span class="hljs-number">55</span>;</code></pre>
 
 <span class="hljs-comment">// Simple commit</span>
 store.$commit(<span class="hljs-string">'setPrice'</span>, <span class="hljs-number">22</span>);
-<span class="hljs-built_in">console</span>.log(store.$state.price); <span class="hljs-comment">// output: 22</span>
-
-<span class="hljs-comment">// Store the result of committing the mutation</span>
-<span class="hljs-keyword">const</span> result = store.commit(<span class="hljs-string">'doSomethingAndReturn'</span>, <span class="hljs-string">'A VALUE'</span>);
-<span class="hljs-built_in">console</span>.log(result); <span class="hljs-comment">// output: "A VALUE"</span></code></pre>
+<span class="hljs-built_in">console</span>.log(store.$state.price); <span class="hljs-comment">// output: 22</span></code></pre>
 				<a href="#actions" id="actions" style="color: inherit; text-decoration: none;">
 					<h3>Actions</h3>
 				</a>
