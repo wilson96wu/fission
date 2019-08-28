@@ -15,7 +15,7 @@ describe('Store', () => {
   });
 
   describe('constructor', () => {
-    describe('it uses an options object to initialise its data', () => {
+    describe('it uses an options object to initialize its data', () => {
       describe('options.state', () => {
         it('gets assigned to the store $state property', () => {
           const options = createStoreOptions();
@@ -46,21 +46,11 @@ describe('Store', () => {
 
           expect(store.$state).toEqual({});
         });
-      });
 
-      describe('options.actions', () => {
-        it('gets assigned to the store $actions private property', () => {
-          const options = createStoreOptions();
-          const store: any = new Store(options);
-          expect(store.$actions).toBeDefined();
-          expect(store.$actions).toBe(options.actions);
-        });
-
-        it('throws an error if the properties are not function definitions', () => {
-          const options: any = createStoreOptions();
-          options.actions.nonFunction = 'test';
-          expect(() => new Store(options)).toThrowError(
-            "Actions definitions should be functions but 'nonFunction' is not a function",
+        test('the store $state property cannot be reassigned', () => {
+          const store: any = new Store(createStoreOptions());
+          expect(() => (store.$state = 'test')).toThrowError(
+            "Cannot assign to read only property '$state' of object '#<Store>'",
           );
         });
       });
@@ -79,6 +69,33 @@ describe('Store', () => {
           expect(() => new Store(options)).toThrowError(
             "Mutation definitions should be functions but 'nonFunction' is not a function",
           );
+        });
+
+        test('the store $mutations property is frozen', () => {
+          const store: any = new Store(createStoreOptions());
+          expect(Object.isFrozen(store.$mutations)).toBe(true);
+        });
+      });
+
+      describe('options.actions', () => {
+        it('throws an error if the properties are not function definitions', () => {
+          const options: any = createStoreOptions();
+          options.actions.nonFunction = 'test';
+          expect(() => new Store(options)).toThrowError(
+            "Actions definitions should be functions but 'nonFunction' is not a function",
+          );
+        });
+
+        it('gets assigned to the store $actions private property', () => {
+          const options = createStoreOptions();
+          const store: any = new Store(options);
+          expect(store.$actions).toBeDefined();
+          expect(store.$actions).toBe(options.actions);
+        });
+
+        test('the store $actions property is frozen', () => {
+          const store: any = new Store(createStoreOptions());
+          expect(Object.isFrozen(store.$actions)).toBe(true);
         });
       });
 
@@ -147,6 +164,7 @@ describe('Store', () => {
       store.$commit('commitInCommit');
 
       expect(store.$state.name).toBe('commitInCommit');
+      expect(store.$state.supplier).toBe('commitInCommit');
     });
 
     it('creates a warning when calling a mutation that does not exist', () => {
@@ -199,9 +217,11 @@ describe('Store', () => {
 
       store.$dispatch('commitInDispatch', 'commitInDispatch');
       expect(store.$state.name).toBe('commitInDispatch');
+      expect(store.$state.supplier).toBe('commitInDispatch');
 
       store.$dispatch('dispatchInDispatch');
       expect(store.$state.name).toBe('dispatchInDispatch');
+      expect(store.$state.supplier).toBe('dispatchInDispatch');
     });
 
     it('creates a warning when calling a action that does not exist', () => {
@@ -291,11 +311,15 @@ function createStoreOptions() {
       changeName(ctx: any, name: string) {
         ctx.state.name = name;
       },
+      changeSupplier(ctx: any, value: string) {
+        ctx.state.supplier = value;
+      },
       addStockItem(ctx: any, item: any) {
         ctx.state.stock.push(item);
       },
       commitInCommit(ctx: any) {
         ctx.commit('changeName', 'commitInCommit');
+        ctx.state.supplier = 'commitInCommit';
       },
     },
     actions: {
@@ -306,9 +330,11 @@ function createStoreOptions() {
       },
       commitInDispatch(ctx: any, value: string) {
         ctx.commit('changeName', value);
+        ctx.commit('changeSupplier', 'commitInDispatch');
       },
       dispatchInDispatch(ctx: any): void {
         ctx.dispatch('commitInDispatch', 'dispatchInDispatch');
+        ctx.commit('changeSupplier', 'dispatchInDispatch');
       },
     },
     modules: {

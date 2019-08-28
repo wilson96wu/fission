@@ -6,7 +6,7 @@ import {
   addPropertyWatcher,
   removePropertyWatcher,
 } from '../observer';
-import { ReactivityState } from '../observer/reactivity-state';
+import { ReactivityState, reactivityState } from '../observer/reactivity-state';
 import { WatcherFunction } from '../observer/observable';
 import { ObservedData } from '../observer/observer';
 
@@ -20,7 +20,7 @@ setReactivityState(ReactivityState.Disabled);
  */
 interface IStore<T extends object> {
   /** Store instance data. */
-  $state: T;
+  readonly $state: T;
   /**
    * Calls a store mutation from the [[Store.$mutations]] map passing in the data the it needs to perform its task.
    *
@@ -301,11 +301,11 @@ interface IActionDefinitions {
  */
 export default class Store<T extends object, U extends object> {
   /** Store instance data. */
-  public $state: ObservedData<T>;
+  public readonly $state!: ObservedData<T>;
   /** Map of mutations that can get invoked using [[$commit]]. */
-  private $mutations: IMutationDefinitions;
+  private readonly $mutations: IMutationDefinitions;
   /** Map of actions that can get invoked using [[$dispatch]]. */
-  private $actions: IActionDefinitions;
+  private readonly $actions: IActionDefinitions;
 
   /**
    * @param options - Options to initialize the store instance.
@@ -314,9 +314,13 @@ export default class Store<T extends object, U extends object> {
     if (isPlainObject(options)) {
       let keys: string[];
       let i: number;
-      this.$state = observe(options.state || {}) as ObservedData<T>;
 
-      // process actions
+      // Ensure $state is cannot be assigned to
+      Object.defineProperty(this, '$state', {
+        value: observe(options.state || {}),
+      });
+
+      // Process actions
       this.$actions = options.actions || {};
       keys = Object.keys(this.$actions);
       for (i = 0; i < keys.length; i++) {
@@ -326,8 +330,9 @@ export default class Store<T extends object, U extends object> {
           );
         }
       }
+      Object.freeze(this.$actions);
 
-      // process mutations
+      // Process mutations
       this.$mutations = options.mutations || {};
       keys = Object.keys(this.$mutations);
       for (i = 0; i < keys.length; i++) {
@@ -337,6 +342,7 @@ export default class Store<T extends object, U extends object> {
           );
         }
       }
+      Object.freeze(this.$mutations);
 
       // process modules
       options.modules = options.modules || ({} as U);
@@ -385,6 +391,7 @@ export default class Store<T extends object, U extends object> {
   public $commit<U>(mutation: string, payload?: U): void {
     const storeOperation = this.$mutations[mutation];
     if (storeOperation) {
+      const lastReactivityState = reactivityState;
       try {
         setReactivityState(ReactivityState.Enabled);
         storeOperation.call(
@@ -399,7 +406,7 @@ export default class Store<T extends object, U extends object> {
       } catch (error) {
         throw error;
       } finally {
-        setReactivityState(ReactivityState.Disabled);
+        setReactivityState(lastReactivityState);
       }
     } else {
       logWarning(`Mutation with key '${mutation}' does not exist`);
