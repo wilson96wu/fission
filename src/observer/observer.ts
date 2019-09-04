@@ -152,41 +152,45 @@ export function defineReactiveProperty<T>(
   key: string | number,
   observable: Observable<T>,
 ): void {
-  // cater for user defined getters
   const descriptor = Object.getOwnPropertyDescriptor(obj, key);
-  const getter = descriptor && descriptor.get ? descriptor.get.bind(obj) : undefined;
-  const setter = descriptor && descriptor.set ? descriptor.set.bind(obj) : undefined;
+  if (!descriptor || (descriptor && descriptor.configurable)) {
+    // cater for user defined getters
+    const getter = descriptor && descriptor.get ? descriptor.get.bind(obj) : undefined;
+    const setter = descriptor && descriptor.set ? descriptor.set.bind(obj) : undefined;
 
-  Object.defineProperty(obj, key, {
-    get: function reactiveGetter(): Observable<T> | T {
-      if (arguments[0] === true) {
-        return observable as Observable<T>;
-      } else {
-        currentEvaluatingObservable && observable.observe(currentEvaluatingObservable);
-
-        return getter ? getter.call(obj) : observable.value;
-      }
-    },
-    // prettier-ignore
-    set: observable instanceof ComputedObservable ? 
-      undefined : 
-      function reactiveSetter(value: T): void {
-        if (reactivityState === ReactivityState.Enabled) {
-          setter && setter(value);
-          value = getter ? getter() : value;
-          if (observable.value !== value) {
-            observeObject((value as unknown) as object, (observable as unknown) as Observable<object>);
-            observable.update(value);
-          }
-        }
-        else if (reactivityState === ReactivityState.Disabled) {
-          throw new Error(REACTIVITY_DISABLED_EXCEPTION);
+    Object.defineProperty(obj, key, {
+      get: function reactiveGetter(): Observable<T> | T {
+        if (arguments[0] === true) {
+          return observable as Observable<T>;
         } else {
-          addReactivityQueueItem({ func: reactiveSetter, args: [value] });
+          currentEvaluatingObservable && observable.observe(currentEvaluatingObservable);
+
+          return getter ? getter.call(obj) : observable.value;
         }
       },
-    enumerable: true,
-  });
+      set:
+        observable instanceof ComputedObservable
+          ? undefined
+          : function reactiveSetter(value: T): void {
+              if (reactivityState === ReactivityState.Enabled) {
+                setter && setter(value);
+                value = getter ? getter() : value;
+                if (observable.value !== value) {
+                  observeObject(
+                    (value as unknown) as object,
+                    (observable as unknown) as Observable<object>,
+                  );
+                  observable.update(value);
+                }
+              } else if (reactivityState === ReactivityState.Disabled) {
+                throw new Error(REACTIVITY_DISABLED_EXCEPTION);
+              } else {
+                addReactivityQueueItem({ func: reactiveSetter, args: [value] });
+              }
+            },
+      enumerable: true,
+    });
+  }
 }
 
 /**

@@ -332,6 +332,16 @@ describe('observer', () => {
       });
     });
 
+    it('ignores properties that are protected i.e not configurable', () => {
+      const target: any = {};
+      Object.defineProperty(target, 'test', { value: 'PROTECTED', configurable: false });
+      defineReactiveProperty(target, 'test', new Observable('NOT OVERRIDING'));
+      const descriptor = Object.getOwnPropertyDescriptor(target, 'test')!;
+      expect(descriptor.get).toBeUndefined();
+      expect(descriptor.set).toBeUndefined();
+      expect(descriptor.value).toBe('PROTECTED');
+    });
+
     it('throws an error if the type being operated on is not an object', () => {
       expect(() =>
         defineReactiveProperty('test' as any, 'invalid', new Observable(5)),
