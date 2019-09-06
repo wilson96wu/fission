@@ -36,4 +36,46 @@ describe('Computed Observable', () => {
       expect(reactivityState).toBe(ReactivityState.Enabled);
     });
   });
+
+  describe('update', () => {
+    it('calls the observable update method when the value passed is different from the current value', () => {
+      const computed: any = new ComputedObservable(Date.now);
+
+      // Need a timeout to ensure the date returned using Date.now is different
+      return timeout(100).then(() => {
+        // Wrap the observable class update function
+        const updateFunction = jest.fn(computed.__proto__.__proto__.update);
+        computed.__proto__.__proto__.update = updateFunction;
+
+        const value = computed.evaluate();
+
+        computed.update(value);
+
+        expect(updateFunction).toBeCalledTimes(1);
+        expect(updateFunction).toBeCalledWith(value);
+      });
+    });
+
+    it('does not call the observable update method when the value passed is the same as the current value', () => {
+      const computed: any = new ComputedObservable(() => 5);
+
+      // Wrap the observable class update function
+      const updateFunction = jest.fn(computed.__proto__.__proto__.update);
+      computed.__proto__.__proto__.update = updateFunction;
+
+      const value = computed.evaluate();
+
+      computed.update(value);
+
+      expect(updateFunction).toBeCalledTimes(0);
+    });
+  });
 });
+
+function timeout(time: number) {
+  return new Promise<any>(resolve => {
+    setTimeout(() => {
+      resolve();
+    }, time);
+  });
+}

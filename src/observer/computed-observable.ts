@@ -48,6 +48,18 @@ export default class ComputedObservable<T> extends Observable<unknown> {
   }
 
   /**
+   * Method used to update the [[value]] property.
+   * This method is overridden from the base class to ensure it only runs when there is a valid data change.
+   *
+   * @param value - New value of the computed observable.
+   */
+  public update(value: T | undefined): void {
+    if (this.value !== value) {
+      super.update(value);
+    }
+  }
+
+  /**
    * Safely evaluate the return value of [[_computedFunction]].
    *
    * Observable updates are turned off to ensure computed observables have no side effects.
