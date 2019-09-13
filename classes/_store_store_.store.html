@@ -126,11 +126,11 @@
       <span class="hljs-comment">// All mutations receive a context variable as a first parameter which has been destructured in the following example.</span>
       <span class="hljs-comment">// The second parameter is the payload passed to the mutation which can be any value.</span>
       <span class="hljs-comment">// Use payload as an object if you wish to pass multiple parameters to the mutation.</span>
-      incrementPriceBy({state, commit}, value){
-        state.price += value;
+      incrementPriceBy({ $state, $commit }, value){
+        $state.price += value;
 
         <span class="hljs-comment">// You can do another commit from this mutation.</span>
-        commit(<span class="hljs-string">'SOME_OTHER_COMMIT'</span>, value);
+        $commit(<span class="hljs-string">'SOME_OTHER_COMMIT'</span>, value);
 
         <span class="hljs-comment">// Mutations can return a result to the caller.</span>
         <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
@@ -160,23 +160,23 @@
       <span class="hljs-comment">// All actions receive a context variable as a first parameter which has been destructured in the following example.</span>
       <span class="hljs-comment">// The second parameter is the payload passed to the action which can be any value.</span>
       <span class="hljs-comment">// Use payload as an object if you wish to pass multiple parameters to the action.</span>
-      setTotal({state, commit, dispatch}, payload) {
+      setTotal({ $state, $commit, $dispatch }, payload) {
         <span class="hljs-comment">// State in actions are readonly and will cause an error when you try to change a value.</span>
-        state.price = <span class="hljs-number">50</span>; <span class="hljs-comment">// this line throws an exception</span>
+        $state.price = <span class="hljs-number">50</span>; <span class="hljs-comment">// this line throws an exception</span>
 
         <span class="hljs-comment">// Do some stuff probably asynchronously</span>
 
         <span class="hljs-comment">// To change state you can use context.commit which is a proxy for &lt;a href="_store_store_.store.html#_commit"&gt;$commit&lt;/a&gt;.</span>
-        commit(<span class="hljs-string">'setPrice'</span>, payload.price);
-        commit(<span class="hljs-string">'setQty'</span>, payload.qty);
+        $commit(<span class="hljs-string">'setPrice'</span>, payload.price);
+        $commit(<span class="hljs-string">'setQty'</span>, payload.qty);
 
         <span class="hljs-comment">// You can also call other actions using context.dispatch which is a proxy for &lt;a href="_store_store_.store.html#_dispatch"&gt;$dispatch&lt;/a&gt;.</span>
-        dispatch(<span class="hljs-string">'SOME_OTHER_ACTION'</span>, <span class="hljs-string">'SOME_OTHER_PAYLOAD'</span>);
+        $dispatch(<span class="hljs-string">'SOME_OTHER_ACTION'</span>, <span class="hljs-string">'SOME_OTHER_PAYLOAD'</span>);
 
         <span class="hljs-comment">// Actions can return a value to the caller</span>
         <span class="hljs-keyword">return</span> <span class="hljs-number">55</span>;
       }
-      doSomethingAsync({state, commit, dispatch}, payload) {
+      doSomethingAsync({ $state, $commit, $dispatch }, payload) {
         <span class="hljs-comment">// You use promises with actions by returning a Promise</span>
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> {
           <span class="hljs-keyword">try</span> {
@@ -209,6 +209,7 @@
    state: {
      owner: <span class="hljs-string">'owner'</span>
    },
+   mutations: {},
    actions: {},
    modules: {
      factory: {
@@ -325,7 +326,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/df8a8e5/src/store/store.ts#L311">store/store.ts:311</a></li>
+									<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/e4d2f2b/src/store/store.ts#L312">store/store.ts:312</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -354,7 +355,7 @@
 					<div class="tsd-signature tsd-kind-icon">$actions<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_store_store_.iactiondefinitions.html" class="tsd-signature-type">IActionDefinitions</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/df8a8e5/src/store/store.ts#L311">store/store.ts:311</a></li>
+							<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/e4d2f2b/src/store/store.ts#L312">store/store.ts:312</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -369,7 +370,7 @@
 					<div class="tsd-signature tsd-kind-icon">$mutations<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_store_store_.imutationdefinitions.html" class="tsd-signature-type">IMutationDefinitions</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/df8a8e5/src/store/store.ts#L309">store/store.ts:309</a></li>
+							<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/e4d2f2b/src/store/store.ts#L310">store/store.ts:310</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -384,7 +385,7 @@
 					<div class="tsd-signature tsd-kind-icon">$state<span class="tsd-signature-symbol">:</span> <a href="../modules/_observer_observer_.html#observeddata" class="tsd-signature-type">ObservedData</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/df8a8e5/src/store/store.ts#L307">store/store.ts:307</a></li>
+							<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/e4d2f2b/src/store/store.ts#L308">store/store.ts:308</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -406,7 +407,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/df8a8e5/src/store/store.ts#L394">store/store.ts:394</a></li>
+									<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/e4d2f2b/src/store/store.ts#L396">store/store.ts:396</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -452,7 +453,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/df8a8e5/src/store/store.ts#L429">store/store.ts:429</a></li>
+									<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/e4d2f2b/src/store/store.ts#L431">store/store.ts:431</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -498,7 +499,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/df8a8e5/src/store/store.ts#L462">store/store.ts:462</a></li>
+									<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/e4d2f2b/src/store/store.ts#L464">store/store.ts:464</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -541,7 +542,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/df8a8e5/src/store/store.ts#L452">store/store.ts:452</a></li>
+									<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/e4d2f2b/src/store/store.ts#L454">store/store.ts:454</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -584,7 +585,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/df8a8e5/src/store/store.ts#L380">store/store.ts:380</a></li>
+									<li>Defined in <a href="https://github.com/amaya-loves-tea/fission/blob/e4d2f2b/src/store/store.ts#L382">store/store.ts:382</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">

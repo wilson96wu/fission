@@ -246,30 +246,30 @@ store.$state.price = <span class="hljs-number">55</span>;</code></pre>
      'payload' is any value that can be passed to the mutation by the user.
     */</span>
     setPrice(context, payload) {
-      context.state.price = payload;
+      context.$state.price = payload;
     },
     <span class="hljs-comment">// Destructured context variable</span>
-    setQty({state}, value) {
-      state.qty = value;
+    setQty({ $state }, value) {
+      $state.qty = value;
     },
      <span class="hljs-comment">// Mutations can return a value to the caller</span>
-    doSomethingAndReturn({state}, value) {
+    doSomethingAndReturn({ $state }, value) {
       <span class="hljs-comment">// Do something...</span>
 
       <span class="hljs-keyword">return</span> value;
     }
     <span class="hljs-comment">// The context parameter also contains a reference to the $commit function.</span>
-    doSomethingAndCommit({state, commit}, value) {
+    doSomethingAndCommit({ $state, $commit }, value) {
       <span class="hljs-comment">// Do stuff</span>
 
       <span class="hljs-comment">// Commit another mutation</span>
-      commit(<span class="hljs-string">'setQty'</span>, value);
+      $commit(<span class="hljs-string">'setQty'</span>, value);
     }
     <span class="hljs-comment">// Mutations cannot asynchronously change store state</span>
-    invalidAsync({state}, value) {
-      state.price = <span class="hljs-number">100</span>; <span class="hljs-comment">// Ok</span>
+    invalidAsync({ $state }, value) {
+      $state.price = <span class="hljs-number">100</span>; <span class="hljs-comment">// Ok</span>
       setTimeout(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
-        state.qty = value; <span class="hljs-comment">// This line will cause an exception</span>
+        $state.qty = value; <span class="hljs-comment">// This line will cause an exception</span>
       }, <span class="hljs-number">100</span>);
     }
   }
@@ -296,18 +296,18 @@ store.$commit(<span class="hljs-string">'setPrice'</span>, <span class="hljs-num
   },
   actions: {
     <span class="hljs-comment">// State is readonly in an action.</span>
-    invalidAction({state}, value) {
-      state.price = <span class="hljs-number">100</span>; <span class="hljs-comment">// This line will cause an exception</span>
+    invalidAction({ $state }, value) {
+      $state.price = <span class="hljs-number">100</span>; <span class="hljs-comment">// This line will cause an exception</span>
     },
     <span class="hljs-comment">// You can commit and dispatch from an action</span>
-    setTotal({commit, dispatch}, payload) {
+    setTotal({ $commit, $dispatch }, payload) {
       <span class="hljs-comment">// Do something with payload perhaps asynchronously persisting it to a server</span>
 
       <span class="hljs-comment">// Persist data to store using commit</span>
-      commit(<span class="hljs-string">'setTotal'</span>, payload);
+      $commit(<span class="hljs-string">'setTotal'</span>, payload);
 
       <span class="hljs-comment">// Trigger another action</span>
-      dispatch(<span class="hljs-string">'totalSet'</span>);
+      $dispatch(<span class="hljs-string">'totalSet'</span>);
     },
     <span class="hljs-comment">/*
       Actions can also return values to the caller.
