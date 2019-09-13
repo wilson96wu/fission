@@ -152,7 +152,7 @@ describe('Store', () => {
       expect(options.mutations.addStockItem).toBeCalledTimes(1);
 
       const context = (options.mutations.addStockItem as any).mock.calls[0][0];
-      expect(context.state).toBe(store.$state);
+      expect(context.$state).toBe(store.$state);
 
       const data = (options.mutations.addStockItem as any).mock.calls[0][1];
       expect(data).toBe(payload);
@@ -169,10 +169,10 @@ describe('Store', () => {
 
     it('creates a warning when calling a mutation that does not exist', () => {
       const store = Store.create(createStoreOptions());
-      store.$commit('DOES NOT EXST');
+      store.$commit('DOES NOT EXIST');
       expect(consoleReference.warn).toBeCalledTimes(1);
       expect(consoleReference.warn).toBeCalledWith(
-        "[Reactivity Warning]: Mutation with key 'DOES NOT EXST' does not exist",
+        "[Reactivity Warning]: Mutation with key 'DOES NOT EXIST' does not exist",
       );
     });
 
@@ -206,7 +206,7 @@ describe('Store', () => {
       expect(options.actions.changeNameAsync).toBeCalledTimes(1);
 
       const context = (options.actions.changeNameAsync as any).mock.calls[0][0];
-      expect(context.state).toBe(store.$state);
+      expect(context.$state).toBe(store.$state);
 
       const data = (options.actions.changeNameAsync as any).mock.calls[0][1];
       expect(data).toBe(payload);
@@ -226,10 +226,10 @@ describe('Store', () => {
 
     it('creates a warning when calling a action that does not exist', () => {
       const store = Store.create(createStoreOptions());
-      store.$dispatch('DOES NOT EXST');
+      store.$dispatch('DOES NOT EXIST');
       expect(consoleReference.warn).toBeCalledTimes(1);
       expect(consoleReference.warn).toBeCalledWith(
-        "[Reactivity Warning]: Action with key 'DOES NOT EXST' does not exist",
+        "[Reactivity Warning]: Action with key 'DOES NOT EXIST' does not exist",
       );
     });
 
@@ -284,7 +284,7 @@ describe('Store', () => {
   test('store state can not be set outside of mutations', () => {
     const options: any = createStoreOptions();
     options.actions.invalid = function(ctx: any) {
-      ctx.state.name = 'INVALID';
+      ctx.$state.name = 'INVALID';
     };
     const store: any = Store.create(options);
     expect(() => (store.$state.name = '__NEW_NAME__')).toThrowError(REACTIVITY_DISABLED_EXCEPTION);
@@ -309,32 +309,32 @@ function createStoreOptions() {
     },
     mutations: {
       changeName(ctx: any, name: string) {
-        ctx.state.name = name;
+        ctx.$state.name = name;
       },
       changeSupplier(ctx: any, value: string) {
-        ctx.state.supplier = value;
+        ctx.$state.supplier = value;
       },
       addStockItem(ctx: any, item: any) {
-        ctx.state.stock.push(item);
+        ctx.$state.stock.push(item);
       },
       commitInCommit(ctx: any) {
-        ctx.commit('changeName', 'commitInCommit');
-        ctx.state.supplier = 'commitInCommit';
+        ctx.$commit('changeName', 'commitInCommit');
+        ctx.$state.supplier = 'commitInCommit';
       },
     },
     actions: {
       changeNameAsync(ctx: any, name: string): void {
         setTimeout(() => {
-          ctx.commit('changeName', name);
+          ctx.$commit('changeName', name);
         }, 10);
       },
       commitInDispatch(ctx: any, value: string) {
-        ctx.commit('changeName', value);
-        ctx.commit('changeSupplier', 'commitInDispatch');
+        ctx.$commit('changeName', value);
+        ctx.$commit('changeSupplier', 'commitInDispatch');
       },
       dispatchInDispatch(ctx: any): void {
-        ctx.dispatch('commitInDispatch', 'dispatchInDispatch');
-        ctx.commit('changeSupplier', 'dispatchInDispatch');
+        ctx.$dispatch('commitInDispatch', 'dispatchInDispatch');
+        ctx.$commit('changeSupplier', 'dispatchInDispatch');
       },
     },
     modules: {

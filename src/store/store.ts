@@ -89,8 +89,8 @@ interface IStoreOptions<T extends object, U extends object> {
 interface IMutationDefinitions {
   [key: string]: (
     context: {
-      state: any;
-      commit: Function;
+      $state: any;
+      $commit: Function;
     },
     payload: any,
   ) => any;
@@ -101,7 +101,7 @@ interface IMutationDefinitions {
  */
 interface IActionDefinitions {
   [key: string]: (
-    context: { state: any; commit: Function; dispatch: Function },
+    context: { $state: any; $commit: Function; $dispatch: Function },
     payload: any,
   ) => any;
 }
@@ -167,11 +167,11 @@ interface IActionDefinitions {
  *       // All mutations receive a context variable as a first parameter which has been destructured in the following example.
  *       // The second parameter is the payload passed to the mutation which can be any value.
  *       // Use payload as an object if you wish to pass multiple parameters to the mutation.
- *       incrementPriceBy({state, commit}, value){
- *         state.price += value;
+ *       incrementPriceBy({ $state, $commit }, value){
+ *         $state.price += value;
  *
  *         // You can do another commit from this mutation.
- *         commit('SOME_OTHER_COMMIT', value);
+ *         $commit('SOME_OTHER_COMMIT', value);
  *
  *         // Mutations can return a result to the caller.
  *         return true;
@@ -204,23 +204,23 @@ interface IActionDefinitions {
  *       // All actions receive a context variable as a first parameter which has been destructured in the following example.
  *       // The second parameter is the payload passed to the action which can be any value.
  *       // Use payload as an object if you wish to pass multiple parameters to the action.
- *       setTotal({state, commit, dispatch}, payload) {
+ *       setTotal({ $state, $commit, $dispatch }, payload) {
  *         // State in actions are readonly and will cause an error when you try to change a value.
- *         state.price = 50; // this line throws an exception
+ *         $state.price = 50; // this line throws an exception
  *
  *         // Do some stuff probably asynchronously
  *
  *         // To change state you can use context.commit which is a proxy for [[$commit]].
- *         commit('setPrice', payload.price);
- *         commit('setQty', payload.qty);
+ *         $commit('setPrice', payload.price);
+ *         $commit('setQty', payload.qty);
  *
  *         // You can also call other actions using context.dispatch which is a proxy for [[$dispatch]].
- *         dispatch('SOME_OTHER_ACTION', 'SOME_OTHER_PAYLOAD');
+ *         $dispatch('SOME_OTHER_ACTION', 'SOME_OTHER_PAYLOAD');
  *
  *         // Actions can return a value to the caller
  *         return 55;
  *       }
- *       doSomethingAsync({state, commit, dispatch}, payload) {
+ *       doSomethingAsync({ $state, $commit, $dispatch }, payload) {
  *         // You use promises with actions by returning a Promise
  *         return new Promise((resolve, reject) => {
  *           try {
@@ -255,6 +255,7 @@ interface IActionDefinitions {
  *    state: {
  *      owner: 'owner'
  *    },
+ *    mutations: {},
  *    actions: {},
  *    modules: {
  *      factory: {
@@ -318,7 +319,7 @@ export default class Store<T extends object, U extends object> {
       let keys: string[];
       let i: number;
 
-      // Ensure $state is cannot be assigned to
+      // Ensure $state cannot be assigned to
       Object.defineProperty(this, '$state', {
         value: observe(options.state || {}),
       });
@@ -355,6 +356,7 @@ export default class Store<T extends object, U extends object> {
         if (isPlainObject(module)) {
           Object.defineProperty(this, keys[i], {
             value: new Store(module),
+            enumerable: true,
           });
         } else {
           throw new Error('Modules must be plain javascript options objects');
@@ -401,8 +403,8 @@ export default class Store<T extends object, U extends object> {
         result = storeOperation.call(
           undefined,
           {
-            state: this.$state as T,
-            commit: this.$commit,
+            $state: this.$state as T,
+            $commit: this.$commit,
           },
           payload,
         );
@@ -432,9 +434,9 @@ export default class Store<T extends object, U extends object> {
       return storeOperation.call(
         undefined,
         {
-          state: this.$state,
-          commit: this.$commit,
-          dispatch: this.$dispatch,
+          $state: this.$state,
+          $commit: this.$commit,
+          $dispatch: this.$dispatch,
         },
         payload,
       );

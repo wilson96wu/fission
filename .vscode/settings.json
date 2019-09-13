@@ -1,5 +1,6 @@
 {
   "cSpell.words": [
+    "Destructured",
     "ESNEXT",
     "Greenkeeper",
     "Interop",
@@ -13,7 +14,8 @@
     "releaserc",
     "toolchain",
     "typedoc",
-    "typeparam"
+    "typeparam",
+    "unwatch"
   ],
   "search.exclude": {
     "**/dist": true,

@@ -193,30 +193,30 @@ const store = new Store({
      'payload' is any value that can be passed to the mutation by the user.
     */
     setPrice(context, payload) {
-      context.state.price = payload;
+      context.$state.price = payload;
     },
     // Destructured context variable
-    setQty({state}, value) {
-      state.qty = value;
+    setQty({ $state }, value) {
+      $state.qty = value;
     },
      // Mutations can return a value to the caller
-    doSomethingAndReturn({state}, value) {
+    doSomethingAndReturn({ $state }, value) {
       // Do something...
 
       return value;
     }
     // The context parameter also contains a reference to the $commit function.
-    doSomethingAndCommit({state, commit}, value) {
+    doSomethingAndCommit({ $state, $commit }, value) {
       // Do stuff
 
       // Commit another mutation
-      commit('setQty', value);
+      $commit('setQty', value);
     }
     // Mutations cannot asynchronously change store state
-    invalidAsync({state}, value) {
-      state.price = 100; // Ok
+    invalidAsync({ $state }, value) {
+      $state.price = 100; // Ok
       setTimeout(() => {
-        state.qty = value; // This line will cause an exception
+        $state.qty = value; // This line will cause an exception
       }, 100);
     }
   }
@@ -247,18 +247,18 @@ const store = new Store({
   },
   actions: {
     // State is readonly in an action.
-    invalidAction({state}, value) {
-      state.price = 100; // This line will cause an exception
+    invalidAction({ $state }, value) {
+      $state.price = 100; // This line will cause an exception
     },
     // You can commit and dispatch from an action
-    setTotal({commit, dispatch}, payload) {
+    setTotal({ $commit, $dispatch }, payload) {
       // Do something with payload perhaps asynchronously persisting it to a server
 
       // Persist data to store using commit
-      commit('setTotal', payload);
+      $commit('setTotal', payload);
 
       // Trigger another action
-      dispatch('totalSet');
+      $dispatch('totalSet');
     },
     /*
       Actions can also return values to the caller.
